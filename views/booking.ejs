@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tambah Customer</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        margin: 0;
+      }
+      main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+      }
+      .card {
+        width: 100%;
+        max-width: 600px;
+        height: auto; /* Remove the fixed height */
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+      }
+      .card-header {
+        background-color: silver;
+      }
+      footer {
+        background-color: rgb(35, 33, 33);
+        color: white;
+        text-align: center;
+        padding: 5px 0;
+      }
+
+      /* Button hover and active effects */
+      .btn {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="card">
+        <div class="card-header text-center">
+          <h3 style="color: white">Booking Form</h3>
+        </div>
+        <div class="card-body">
+          <form id="addCustomerForm" class="d-flex flex-column" style="gap: 15px">
+            <!-- Form Fields -->
+            <div>
+              <label for="nama" class="form-label">Nama</label>
+              <input type="text" id="nama" class="form-control" placeholder="Nama" required/>
+            </div>
+            <div>
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" class="form-control" placeholder="Email" required />
+            </div>
+            <div>
+              <label for="phone_number" class="form-label">Phone Number</label>
+              <input type="text" id="phone_number" class="form-control" placeholder="Phone Number" required/>
+            </div>
+
+            <!-- Dropdown and Price -->
+            <div class="row">
+              <div class="col-md-6">
+                <label for="jenis_room" class="form-label">Jenis Room</label>
+                <select id="jenis_room" class="form-control" required>
+                  <option value="" disabled selected>Pilih Jenis Room</option>
+                  <option value="Deluxe room" data-harga="1000000">Deluxe room </option>
+                  <option value="Junior suite" data-harga="500000">Junior suite</option>
+                  <option value="Family room" data-harga="1500000">Family room</option>
+                  <option value="Presidential Suite" data-harga="700000">Presidential Suite</option>
+                  <option value="Executive room" data-harga="800000">Executive room</option>
+                  <option value="Single room" data-harga="300000">Single room</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="harga" class="form-label">Harga</label>
+                <input type="text" id="harga" class="form-control" placeholder="Harga" readonly/>
+              </div>
+            </div>
+            <!-- Dates -->
+            <div class="row">
+              <div class="col-md-6">
+                <label for="check_in_date" class="form-label">Check-in Date</label>
+                <input type="date" id="check_in_date" class="form-control" required/>
+              </div>
+              <div class="col-md-6">
+                <label for="check_out_date" class="form-label">Check-out Date</label>
+                <input type="date" id="check_out_date" class="form-control" required/>
+              </div>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-100">Buat Pesanan</button>
+          </form>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p class="mb-0">&copy; 2024 Hotel murah. All rights reserved.</p>
+    </footer>
+
+    <!-- Modal Notification -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">Success</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">Customer berhasil ditambahkan!</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Detail Pesanan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script to handle Add Customer form submission -->
+    <script>
+      $(document).ready(function () {
+        // Handle jenis_room change event
+        $("#jenis_room").change(function () {
+          const harga = $(this).find(":selected").data("harga");
+          if (harga) {
+            $("#harga").val(harga.toLocaleString("id-ID"));
+            console.log("Harga terpilih:", harga);
+          } else {
+            $("#harga").val("");
+          }
+        });
+
+        $("#addCustomerForm").submit(function (e) {
+          e.preventDefault();
+          const hargaString = $("#harga").val().replace(/\./g, "");
+          const harga = parseInt(hargaString, 10);
+
+          if (isNaN(harga)) {
+            alert("Harga tidak valid. Pastikan harga diisi dengan benar.");
+            return;
+          }
+
+          const data = {
+            nama: $("#nama").val(),
+            email: $("#email").val(),
+            phone_number: $("#phone_number").val(),
+            jenis_room: $("#jenis_room").val(),
+            check_in_date: $("#check_in_date").val(),
+            check_out_date: $("#check_out_date").val(),
+            harga: harga,
+          };
+
+          console.log("Data yang dikirim:", data);
+
+          $.ajax({
+            url: "/dataCustomer",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (response) {
+              $("#successModal").modal("show");
+              setTimeout(function () {
+                window.location.href = "/dataCustomer-view";
+              }, 2000);
+            },
+            error: function (xhr) {
+              console.error("Error:", xhr.responseText);
+              alert("Gagal menambahkan customer. Coba lagi.");
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
