@@ -26,62 +26,144 @@
 
     <div class="card shadow-lg mb-4 mt-5 mx-auto" style="max-width: 68%;">
         <div class="card-header bg-primary text-white text-center">
-            <h4>Halaman Admin Hotel Murah</h4>
+            <h4>Selamat Datang Di Admin Page</h4>
         </div>
         <div class="card-body">
             <p class="text-center" id="username-display" style="font-weight: bold; color: green"></p>
-            <h3 class="text-center">Welcome, <%= username %>!</h3>
+            <h4 class="text-center" style="color: green;">Welcome, <%= username %>!</h4>
         </div>
     </div>
 
     <div class="container mt-4">
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-primary">
+            <table class="table table-bordered table-hover align-middle w-100">
+                <thead class="table-primary text-center">
                     <tr>
-                        <th>No</th>
-                        <th>Nama Customer</th>
-                        <th>Email</th>
-                        <th>No. Telepon</th>
-                        <th>Tanggal Check-in</th>
-                        <th>Tanggal Check-out</th>
-                        <th>Aksi</th>
+                        <th style="width: 5%;">No</th>
+                        <th style="width: 20%;">Nama Customer</th>
+                        <th style="width: 20%;">Email</th>
+                        <th style="width: 20%;">No. Telepon</th>
+                        <th style="width: 20%;">Check-in</th>
+                        <th style="width: 20%;">Check-out</th>
+                        <th style="width: 20%;">Harga</th>
+                        <th style="width: 20%;">Username</th>
+                        <th style="width: 10%;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="customerList">
                     <% customer.forEach((indexAdmin, i) => { %>
                     <tr>
-                        <td><%= indexAdmin.nama %></td>
-                        <td><%= indexAdmin.email %></td>
-                        <td><%= indexAdmin.phone_number %></td>
-                        <td><%= indexAdmin.jenis_room%></td>
-                        <td><%= indexAdmin.check_in_date %></td>
-                        <td><%= indexAdmin.check_out_date %></td>
-                        <td><%= indexAdmin.harga%></td>
+                        <td class="text-center"><%= i + 1 %></td>
+                        <td class="text-center"><%= indexAdmin.nama %></td>
+                        <td class="text-center"><%= indexAdmin.email %></td>
+                        <td class="text-center"><%= indexAdmin.phone_number %></td>
+                        <td class="text-center date-cell"><%= indexAdmin.check_in_date %></td>
+                        <td class="text-center date-cell"><%= indexAdmin.check_out_date %></td>
+                        <td class="text-center"><%= indexAdmin.harga %></td>
+                        <td class="text-center"><%= indexAdmin.username %></td>
                         <td class="text-center">
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-sm btn-success editBtn w-100" data-id="<%= indexAdmin.id %>">Edit</button>
-                                <button class="btn btn-sm btn-danger deleteBtn w-100" data-id="<%= indexAdmin.id %>">Cancel</button>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-success w-60 editBtn" data-id="<%= indexAdmin.id %>">Edit</button>
+                                <button class="btn btn-sm btn-danger w-60 deleteBtn" data-id="<%= indexAdmin.id %>">Cancel</button>
                             </div>
                         </td>
                     </tr>
                     <% }); %>
-                </tbody>
+                </tbody>                
             </table>
+            <% if (customer.length === 0) { %>
+            <div class="alert alert-warning text-center" role="alert">Belum ada Data Pesanan</div>
+            <% } %>
         </div>
-        <% if (customer.length === 0) { %>
-        <div class="alert alert-warning text-center" role="alert">Belum ada Data</div>
-        <% } %>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div id="confirmDeleteModal" class="modal fade" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Konfirmasi Penghapusan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus pesanan ini?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus Pesanan</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var navbar = document.getElementById("mainNavbar");
-            var currentPage = window.location.pathname;
-            if (currentPage.includes("/admin/index") && navbar) {
-                navbar.style.display = "none";
-            }
+            // Format tanggal di dalam tabel
+            document.querySelectorAll(".date-cell").forEach((cell) => {
+                const originalDate = cell.textContent.trim();
+                if (originalDate) {
+                    const formattedDate = formatDate(originalDate);
+                    cell.textContent = formattedDate;
+                }
+            });
+
+            let selectedCustomerId = null;
+
+            // Ketika tombol Cancel ditekan
+            document.querySelectorAll(".deleteBtn").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    selectedCustomerId = this.getAttribute("data-id");
+                    const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+                    modal.show();
+                });
+            });
+
+            // Konfirmasi Hapus di Modal
+            document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                if (selectedCustomerId) {
+                    fetch(`/indexAdmin/${selectedCustomerId}`, {
+                        method: "DELETE",
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                const modal = bootstrap.Modal.getInstance(document.getElementById("confirmDeleteModal"));
+                                modal.hide();
+                                location.reload();
+                            } else {
+                                return response.text().then((text) => {
+                                    throw new Error(text);
+                                });
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error deleting customer:", error);
+                            alert("Terjadi kesalahan saat menghapus data.");
+                        });
+                }
+            });
         });
+
+        function formatDate(date) {
+            const months = [
+                "Januari",
+                "Februari",
+                "Maret",
+                "April",
+                "Mei",
+                "Juni",
+                "Juli",
+                "Agustus",
+                "September",
+                "Oktober",
+                "November",
+                "Desember",
+            ];
+            const d = new Date(date);
+            const day = d.getDate().toString().padStart(2, "0");
+            const month = months[d.getMonth()];
+            const year = d.getFullYear();
+            return `${day} ${month} ${year}`;
+        }
     </script>
 
     <script

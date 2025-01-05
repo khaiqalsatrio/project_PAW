@@ -72,6 +72,7 @@ app.get("/logoutAdmin", (req, res) => {
   });
 });
 
+
 // Rute customer
 app.use("/dataCustomer", customerRoutes);
 
@@ -111,17 +112,31 @@ app.get("/logout", (req, res) => {
 
 // Rute untuk menampilkan data customer
 app.get("/dataCustomer-view", isAuthenticated, (req, res) => {
-  db.query("SELECT * FROM customer", (err, customer) => {
+  // Ambil username dari session atau req.user
+  const username = req.user.username; // Sesuaikan dengan bagaimana Anda menyimpan username setelah login
+  
+  // Query untuk mencari data customer berdasarkan username
+  db.query("SELECT * FROM customer WHERE username = ?", [username], (err, customer) => {
     if (err) {
       console.error("Error fetching dataCustomer data:", err); // Tampilkan error jika query gagal
       return res.status(500).send("Internal Server Error");
     }
+    // Cek apakah ada data customer yang ditemukan
+    if (customer.length === 0) {
+      return res.render("dataCustomer", {
+        layout: "layout/main-layout.ejs", // Gunakan layout utama
+        customer: [], // Kirimkan array kosong jika tidak ada data yang cocok
+        message: "Data tidak ditemukan untuk username yang digunakan", // Pesan tambahan jika tidak ada data
+      });
+    }
+    // Kirimkan data customer yang ditemukan ke template
     res.render("dataCustomer", {
       layout: "layout/main-layout.ejs", // Gunakan layout utama
       customer, // Kirimkan data customer ke template
     });
   });
 });
+
 
 // Jalankan server di port yang sudah ditentukan
 app.listen(port, () => {

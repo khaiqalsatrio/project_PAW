@@ -48,8 +48,9 @@
 
       /* Style for disabled links */
       .disabled-link {
-        pointer-events: none;
-        opacity: 0.5;
+        pointer-events: none; /* Disable click events */
+        opacity: 0.6; /* Reduce visibility to indicate disabled state */
+        color: gray !important; /* Optional: change the text color */
       }
     </style>
   </head>
@@ -57,7 +58,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Hotel Murah</a>
+        <a class="navbar-brand" href="#">OYO</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -73,7 +74,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
+              <a class="nav-link" href="/index">Home</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/booking">Booking Sekarang</a>
@@ -136,30 +137,37 @@
       crossorigin="anonymous"
     ></script>
 
-<script>
-// Highlight the active navbar item and disable navbar on specific pages
-window.addEventListener("DOMContentLoaded", function () {
-  var navbarLinks = document.querySelectorAll(".navbar-nav .nav-link");
-  var navbar = document.querySelector(".navbar"); // Menangkap elemen navbar
-  var currentPage = window.location.pathname;
+    <script>
+      // Highlight the active navbar item and disable navbar on specific pages
+      window.addEventListener("DOMContentLoaded", function () {
+        var navbarLinks = document.querySelectorAll(".navbar-nav .nav-link");
+        var navbar = document.querySelector(".navbar"); // Menangkap elemen navbar
+        var currentPage = window.location.pathname;
 
-  // Highlight the active navbar item
-  navbarLinks.forEach(function (link) {
-    // If the href of the link matches the current page
-    if (link.getAttribute("href") === currentPage) {
-      link.classList.add("active");
-    } else {
-      link.classList.remove("active");
-    }
-  });
+        // Highlight the active navbar item
+        navbarLinks.forEach(function (link) {
+          // If the href of the link matches the current page
+          if (link.getAttribute("href") === currentPage) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
 
-  // Disable navbar if on login, register, or indexAdmin page
-  var disabledPages = ["/login", "/loginAdmin", "/register", "/registerAdmin", "/indexAdmin"]; // Pages to disable navbar
-  if (disabledPages.includes(currentPage)) {
-    navbar.style.display = "none"; // Menyembunyikan navbar jika halaman adalah indexAdmin
-  }
-});
+        // Disable navbar links if on login or register page
+        var disabledPages = ["/login", "/register"];
+        if (disabledPages.includes(currentPage)) {
+          navbarLinks.forEach(function (link) {
+            link.classList.add("disabled-link"); // Tambahkan kelas untuk menonaktifkan tautan
+          });
+        }
 
+        // Sembunyikan navbar pada halaman tertentu
+        var hiddenPages = ["/loginAdmin", "/registerAdmin", "/indexAdmin"];
+        if (hiddenPages.includes(currentPage)) {
+          navbar.style.display = "none"; // Sembunyikan navbar jika halaman adalah indexAdmin
+        }
+      });
     </script>
   </body>
 </html>

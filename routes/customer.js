@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../Database/db");
+const { isAuthenticated } = require("../Middlewere/Middlewere");
 
 // Mendapatkan semua data customer
 router.get("/", (req, res) => {
@@ -23,7 +24,7 @@ router.get("/:id", (req, res) => {
 });
 
 // Menyimpan data customer baru
-router.post("/", (req, res) => {
+router.post("/", isAuthenticated, (req, res) => {
   const {
     nama,
     email,
@@ -34,6 +35,9 @@ router.post("/", (req, res) => {
     harga,
   } = req.body; // Ambil data dari body request
 
+  // Ambil username dari session pengguna yang sedang login
+  const username = req.session.username;
+
   // Validasi input
   if (
     !nama ||
@@ -42,7 +46,8 @@ router.post("/", (req, res) => {
     !jenis_room ||
     !check_in_date ||
     !check_out_date ||
-    !harga
+    !harga ||
+    !username
   ) {
     return res.status(400).send("Semua field harus diisi");
   }
@@ -55,7 +60,7 @@ router.post("/", (req, res) => {
 
   // Query untuk menyimpan data baru ke tabel customer
   db.query(
-    "INSERT INTO customer (nama, email, phone_number, jenis_room, check_in_date, check_out_date, harga) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO customer (nama, email, phone_number, jenis_room, check_in_date, check_out_date, harga, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     [
       nama.trim(),
       email.trim(),
@@ -64,9 +69,13 @@ router.post("/", (req, res) => {
       check_in_date,
       check_out_date,
       hargaNumber,
+      username.trim(),
     ],
     (err, results) => {
-      if (err) return res.status(500).send("Internal Server Error"); // Error pada server
+      if (err) {
+        console.error("Error inserting customer:", err);
+        return res.status(500).send("Internal Server Error"); // Error pada server
+      }
       res.status(201).json({
         id: results.insertId, // ID dari data yang baru ditambahkan
         nama,
@@ -76,10 +85,12 @@ router.post("/", (req, res) => {
         check_in_date,
         check_out_date,
         harga: hargaNumber,
+        username,
       });
     }
   );
 });
+
 
 // Mengedit data customer berdasarkan ID
 router.put("/:id", (req, res) => {

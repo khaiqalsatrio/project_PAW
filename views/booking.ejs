@@ -26,14 +26,25 @@
       .card {
         width: 100%;
         max-width: 600px;
-        height: auto; /* Remove the fixed height */
         display: flex;
         flex-direction: column;
-        padding: 15px;
+        padding: 0; /* Menghapus padding default */
+        border-radius: 7px; /* Membuat sudut membulat untuk seluruh card */
+        overflow: hidden; /* Supaya isi card tidak keluar */
       }
-      .card-header {
-        background-color: silver;
+    .card-header {
+      background-color: rgb(84, 83, 88)
+      ;
+      color: white;
+      padding: 15px;
+      text-align: center;
       }
+
+    .card-body {
+    padding: 15px;
+    background-color: whitesmoke;
+  }
+
       footer {
         background-color: rgb(35, 33, 33);
         color: white;
@@ -110,7 +121,7 @@
               </div>
             </div>
             <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary w-100">Buat Pesanan</button>
+            <button type="submit" class="btn w-100" style="background-color: #2f4dd5; color: whitesmoke;">Buat Pesanan</button>
           </form>
         </div>
       </div>

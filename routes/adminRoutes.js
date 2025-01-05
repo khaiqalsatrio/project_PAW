@@ -137,20 +137,4 @@ router.post("/logoutAdmin", (req, res) => {
     });
 });
 
-// router.get("/", (req, res) => {
-//     db.query("SELECT * FROM customer", (err, result) => {
-//         if (err) return res.status(500).send("Internal Server error");
-//         res.json(result);
-//     });
-// });
-
-// router.get("/id", (req, res) => {
-//     const { id } = req.params;
-//     db.query("SELECT * FROM customer WHERE id = ?", [id], (err, result) => {
-//         if (err) return res.status(500).send("Internal server Error");
-//         if (result.length === 0)
-//             return res.status(404).send("Data Customer Tidak Di emukna");
-//         res.json(result[0]);
-//     });
-// });
 module.exports = router;

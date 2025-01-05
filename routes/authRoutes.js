@@ -92,7 +92,7 @@ router.post("/login", (req, res) => {
         // Password cocok, buat session untuk user
         req.session.userId = result[0].id; // Simpan userId di session
         req.session.username = result[0].username; // Simpan username di session
-        res.redirect("/"); // Redirect ke halaman utama
+        res.redirect("/index"); // Redirect ke halaman utama
       });
     }
   );
@@ -120,5 +120,26 @@ router.get("/getUser", (req, res) => {
   res.json({ username: req.session.username });
 });
 
-// Ekspor router agar dapat digunakan di file lain
+// Rute untuk halaman index admin
+router.get("/index", (req, res) => {
+  // Pastikan session memiliki username
+  if (!req.session || !req.session.username) {
+      return res.redirect("/loginAdmin?error=true&message=Please%20login%20first");
+  }
+  // Query untuk mendapatkan data customer
+  const query = "SELECT * FROM customer";
+  db.query(query, (err, result) => {
+      if (err) {
+          console.error("Error fetching customer data:", err);
+          return res.status(500).send("Internal Server Error");
+      }
+      // Render halaman index admin dengan data customer
+      res.render("index", {
+          layout: "layout/main-layout", // Gunakan layout utama
+          username: req.session.username, // Kirim username ke template
+          customer: result, // Kirim data customer ke template
+      });
+  });
+});
+
 module.exports = router;
