@@ -1,13 +1,13 @@
-function isAuthenticated(req, res, next) {
-    // Periksa apakah ada session dengan userId
-    if (req.session.userId) {
-        // Jika userId ada dalam session, lanjutkan ke middleware atau route handler berikutnya
+function isAdmin(req, res, next) {
+    // Periksa apakah ada session dengan userId dan role adalah admin
+    if (req.session.userId && req.session.role === "admin") {
+        // Jika userId ada dan role adalah admin, lanjutkan ke middleware atau route handler berikutnya
         return next();
     } else {
-        // Jika userId tidak ada, redirect user ke halaman login dengan pesan error
-        return res.redirect("/loginAdmin?error=true&message=Anda%20harus%20login%20terlebih%20dahulu");
+        // Jika tidak, redirect user ke halaman login admin dengan pesan error
+        return res.redirect("/loginAdmin?error=true&message=Anda%20tidak%20memiliki%20akses%20ke%20halaman%20ini");
     }
 }
 
-// Ekspor fungsi isAuthenticated agar dapat digunakan di file lain
-module.exports = { isAuthenticated };
+// Ekspor fungsi isAdmin agar dapat digunakan di file lain
+module.exports = { isAdmin };

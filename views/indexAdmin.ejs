@@ -10,21 +10,77 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
         crossorigin="anonymous"
     />
+    <style>
+    /* Custom CSS untuk memperbaiki tampilan tabel */
+    .table th, .table td {
+        vertical-align: middle;
+        text-align: center;
+        padding: 8px; /* Kurangi padding agar tidak terlalu besar */
+    }
+    
+    .table th {
+        background-color: #007bff;
+        color: white;
+        padding: 10px; /* Menambahkan sedikit padding untuk header agar lebih proporsional */
+    }
+    
+    .table-striped tbody tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: #e6f7ff;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
+    }
+    
+    .btn-group .btn {
+        width: 45%;
+    }
+    
+    /* Menambah jarak antara tabel dan elemen lain */
+    .table-responsive {
+        margin-top: 20px;  /* Menambahkan margin atas */
+        margin-bottom: 20px; /* Menambahkan margin bawah */
+    }
+    /* Mengatur ukuran dan jarak tabel lebih proporsional */
+    table {
+        margin: 0 auto; /* Menjaga tabel tetap terpusat */
+        width: 100%; /* Tabel memenuhi lebar container */
+    }
+    </style>
 </head>
 <body>
     <ul class="nav nav-tabs" style="background-color: rgb(36, 36, 200);">
         <li class="nav-item">
-            <a class="nav-link" href="#" style="color: white;">Data Customer</a>
+            <a class="nav-link" href="/indexAdmin" style="color: white;">Data Customer</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#" style="color: white;">Tambah Jenis Kamar</a>
+            <a class="nav-link" href="/jenisKamar" style="color: white;">Tambah Jenis Kamar</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/dataKamar" style="color: white;">Daftar Kamar</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/logoutAdmin" style="color: white;">Logout</a>
         </li>
     </ul>
 
-    <div class="card shadow-lg mb-4 mt-5 mx-auto" style="max-width: 68%;">
+    <div class="card shadow-lg mb-4 mt-5 mx-auto" style="max-width: 76%;">
         <div class="card-header bg-primary text-white text-center">
             <h4>Selamat Datang Di Admin Page</h4>
         </div>
@@ -36,27 +92,29 @@
 
     <div class="container mt-4">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle w-100">
+            <table class="table table-bordered table-hover table-striped align-middle w-100">
                 <thead class="table-primary text-center">
                     <tr>
-                        <th style="width: 5%;">No</th>
+                        <th style="width: 10%;">ID Booking</th>
                         <th style="width: 20%;">Nama Customer</th>
-                        <th style="width: 20%;">Email</th>
-                        <th style="width: 20%;">No. Telepon</th>
-                        <th style="width: 20%;">Check-in</th>
-                        <th style="width: 20%;">Check-out</th>
-                        <th style="width: 20%;">Harga</th>
-                        <th style="width: 20%;">Username</th>
+                        <th style="width: 10%;">Email</th>
+                        <th style="width: 10%;">No. Telepon</th>
+                        <th style="width: 10%;">Kamar</th>
+                        <th style="width: 10%;">Check-in</th>
+                        <th style="width: 10%;">Check-out</th>
+                        <th style="width: 10%;">Harga</th>
+                        <th style="width: 10%;">Username</th>
                         <th style="width: 10%;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="customerList">
                     <% customer.forEach((indexAdmin, i) => { %>
                     <tr>
-                        <td class="text-center"><%= i + 1 %></td>
+                        <td class="text-center"><%= indexAdmin.id %></td>
                         <td class="text-center"><%= indexAdmin.nama %></td>
                         <td class="text-center"><%= indexAdmin.email %></td>
                         <td class="text-center"><%= indexAdmin.phone_number %></td>
+                        <td class="text-center"><%= indexAdmin.jenis_room %></td>
                         <td class="text-center date-cell"><%= indexAdmin.check_in_date %></td>
                         <td class="text-center date-cell"><%= indexAdmin.check_out_date %></td>
                         <td class="text-center"><%= indexAdmin.harga %></td>
@@ -142,7 +200,6 @@
                 }
             });
         });
-
         function formatDate(date) {
             const months = [
                 "Januari",
@@ -165,7 +222,6 @@
             return `${day} ${month} ${year}`;
         }
     </script>
-
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

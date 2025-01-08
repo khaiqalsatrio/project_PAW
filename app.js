@@ -10,10 +10,12 @@ require("dotenv").config(); // Memuat variabel lingkungan dari .env
 const { isAuthenticated } = require("./Middlewere/Middlewere"); // Middleware untuk autentikasi
 
 const app = express();
+
 const port = process.env.PORT || 3000; // Default ke port 3000 jika tidak ada di .env
 
 // Middleware untuk parsing JSON dan form data
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
 // Middleware untuk mengakses file statis (CSS, JS, dll.)
@@ -38,11 +40,18 @@ app.use(
   })
 );
 
+// Di file app.js, nonaktifkan layout
+app.set('layout', false);  // Menonaktifkan penggunaan layout
+
 // Rute admin
 app.use("/", adminRoutes);
 
 // Rute untuk login/logout admin
 app.use("/", adminRoutes);
+
+app.use("/jenisKamar", adminRoutes);
+
+app.use("/dataKamar", adminRoutes);
 
 app.use("/indexAdmin", customerRoutes);
 
@@ -60,6 +69,29 @@ app.get("/indexAdmin-view", isAuthenticated, (req, res) => {
   });
 });
 
+// Rute untuk menampilkan data kamar
+app.get("/dataKamar-view", isAuthenticated, (req, res) => {
+  
+  // Query untuk mencari data customer berdasarkan username
+  db.query("SELECT * FROM room WHERE = ?", (err, room) => {
+    if (err) {
+      console.error("Error fetching dataCustomer data:", err); // Tampilkan error jika query gagal
+      return res.status(500).send("Internal Server Error");
+    }
+    // Cek apakah ada data customer yang ditemukan
+    if (customer.length === 0) {
+      return res.render("dataKamar", {
+        layout: "layout/main-layout.ejs", // Gunakan layout utama
+        customer: [], // Kirimkan array kosong jika tidak ada data yang cocok // Pesan tambahan jika tidak ada data
+      });
+    }
+    // Kirimkan data customer yang ditemukan ke template
+    res.render("dataCustomer", {
+      layout: "layout/main-layout.ejs", // Gunakan layout utama
+      customer, // Kirimkan data customer ke template
+    });
+  });
+});
 
 // Rute untuk logout admin
 app.get("/logoutAdmin", (req, res) => {

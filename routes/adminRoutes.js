@@ -99,7 +99,7 @@ router.post("/logoutAdmin", (req, res) => {
         if (err) {
             return res.status(500).send("Error logging out");
         }
-        res.redirect("/login");
+        res.redirect("/loginAdmin");
     });
 });
 
@@ -125,15 +125,42 @@ router.get("/indexAdmin", (req, res) => {
     });
 });
 
-// Proses Logout
-router.post("/logoutAdmin", (req, res) => {
-    // Hapus session user
-    req.session.destroy((err) => {
-    if (err) {
-        return res.status(500).send("Error logging out");
+// Halaman Registrasi jenis kamar
+router.get("/jenisKamar", (req, res) => {
+    res.render("jenisKamar", { layout: "layout/main-layout" });
+});
+
+// route halaman data kamar
+router.get('/dataKamar', (req, res) => {
+    // Query untuk mendapatkan data kamar
+    const query = "SELECT * FROM room";
+    db.query(query, (err, result) => {
+        if (err) {
+            console.error("Error fetching room data:", err);
+            return res.render("dataKamar", { room: [] });
+        }
+        // Kirim data ke template
+        res.render("dataKamar", { room: result });
+    });
+});
+
+// Proses save data kamar
+router.post("/submitKamar", (req, res) => {
+    const { nama_kamar, harga_kamar, deskripsi_kamar } = req.body;
+
+    if (!nama_kamar || !harga_kamar || !deskripsi_kamar) {
+        return res.status(400).json({ error: "Semua field harus diisi" });
     }
-      // Redirect ke halaman login setelah logout
-    res.redirect("/loginAdmin");
+
+    const query = "INSERT INTO room (nama_kamar, harga_kamar, deskripsi_kamar) VALUES (?, ?, ?)";
+    const values = [nama_kamar, harga_kamar, deskripsi_kamar];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error("Error inserting data into database:", err);
+            return res.status(500).json({ error: "Gagal menyimpan data kamar" });
+        }
+        res.status(201).json({ message: "Data kamar berhasil disimpan" });
     });
 });
 
