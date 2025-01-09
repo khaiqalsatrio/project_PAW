@@ -144,6 +144,27 @@ router.get('/dataKamar', (req, res) => {
     });
 });
 
+// Menghapus room berdasarkan ID
+router.delete("/:id", (req, res) => {
+    const { id } = req.params; // Ambil ID dari parameter URL
+    // Validasi ID
+    if (!id || isNaN(id)) {
+    return res.status(400).send("ID tidak valid");
+    }
+    // Query untuk menghapus data customer berdasarkan ID
+    db.query("DELETE FROM room WHERE id = ?", [id], (err, results) => {
+    if (err) {
+        console.error("Error saat menghapus data:", err);
+        return res.status(500).send("Internal Server Error"); // Error pada server
+    }
+    if (results.affectedRows === 0) {
+        return res.status(404).send("Room tidak ditemukan"); // Jika data tidak ditemukan
+    }
+      res.status(204).send(); // Kirim respons kosong (data berhasil dihapus)
+    });
+});
+
+
 // Proses save data kamar
 router.post("/submitKamar", (req, res) => {
     const { nama_kamar, harga_kamar, deskripsi_kamar } = req.body;
@@ -160,8 +181,11 @@ router.post("/submitKamar", (req, res) => {
             console.error("Error inserting data into database:", err);
             return res.status(500).json({ error: "Gagal menyimpan data kamar" });
         }
-        res.status(201).json({ message: "Data kamar berhasil disimpan" });
+        // Redirect ke halaman data kamar setelah berhasil menyimpan data
+        res.redirect("/dataKamar"); // Ganti dengan route yang sesuai untuk halaman data kamar
     });
 });
+
+
 
 module.exports = router;

@@ -15,7 +15,6 @@ const port = process.env.PORT || 3000; // Default ke port 3000 jika tidak ada di
 
 // Middleware untuk parsing JSON dan form data
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: true }));
 
 // Middleware untuk mengakses file statis (CSS, JS, dll.)
@@ -40,55 +39,39 @@ app.use(
   })
 );
 
-// Di file app.js, nonaktifkan layout
-app.set('layout', false);  // Menonaktifkan penggunaan layout
+// Menonaktifkan penggunaan layout
+app.set('layout', false);
 
 // Rute admin
 app.use("/", adminRoutes);
-
-// Rute untuk login/logout admin
-app.use("/", adminRoutes);
-
 app.use("/jenisKamar", adminRoutes);
-
 app.use("/dataKamar", adminRoutes);
-
 app.use("/indexAdmin", customerRoutes);
 
 // Rute untuk menampilkan data customer di halaman admin
 app.get("/indexAdmin-view", isAuthenticated, (req, res) => {
-  db.query("SELECT * FROM customer", (err, customer) => {
+  db.query("SELECT * FROM customer", (err, customers) => {
     if (err) {
       console.error("Error fetching dataCustomer data:", err); // Tampilkan error jika query gagal
       return res.status(500).send("Internal Server Error");
     }
     res.render("indexAdmin", {
       layout: "layout/main-layout.ejs", // Gunakan layout utama
-      customer, // Kirimkan data customer ke template
+      customers, // Kirimkan data customer ke template
     });
   });
 });
 
 // Rute untuk menampilkan data kamar
 app.get("/dataKamar-view", isAuthenticated, (req, res) => {
-  
-  // Query untuk mencari data customer berdasarkan username
-  db.query("SELECT * FROM room WHERE = ?", (err, room) => {
+  db.query("SELECT * FROM room", (err, rooms) => {
     if (err) {
-      console.error("Error fetching dataCustomer data:", err); // Tampilkan error jika query gagal
+      console.error("Error fetching room data:", err); // Tampilkan error jika query gagal
       return res.status(500).send("Internal Server Error");
     }
-    // Cek apakah ada data customer yang ditemukan
-    if (customer.length === 0) {
-      return res.render("dataKamar", {
-        layout: "layout/main-layout.ejs", // Gunakan layout utama
-        customer: [], // Kirimkan array kosong jika tidak ada data yang cocok // Pesan tambahan jika tidak ada data
-      });
-    }
-    // Kirimkan data customer yang ditemukan ke template
-    res.render("dataCustomer", {
+    res.render("dataKamar", {
       layout: "layout/main-layout.ejs", // Gunakan layout utama
-      customer, // Kirimkan data customer ke template
+      rooms, // Kirimkan data kamar ke template
     });
   });
 });
@@ -103,7 +86,6 @@ app.get("/logoutAdmin", (req, res) => {
     res.redirect("/loginAdmin"); // Arahkan kembali ke halaman login
   });
 });
-
 
 // Rute customer
 app.use("/dataCustomer", customerRoutes);
@@ -120,8 +102,13 @@ app.get("/", isAuthenticated, (req, res) => {
 
 // Rute untuk halaman booking (akses hanya jika user login)
 app.get("/booking", isAuthenticated, (req, res) => {
-  res.render("booking", {
-    layout: "layout/main-layout.ejs", // Gunakan layout utama
+  db.query('SELECT nama_kamar, harga_kamar FROM room', (err, results) => {
+    if (err) {
+      console.error('Database query error:', err.message);
+      res.status(500).send('Terjadi kesalahan saat mengambil data kamar.');
+    } else {
+      res.render('booking', { layout: 'layout/main-layout.ejs', booking: results });
+    }
   });
 });
 
@@ -144,33 +131,53 @@ app.get("/logout", (req, res) => {
 
 // Rute untuk menampilkan data customer
 app.get("/dataCustomer-view", isAuthenticated, (req, res) => {
-  // Ambil username dari session atau req.user
   const username = req.user.username; // Sesuaikan dengan bagaimana Anda menyimpan username setelah login
   
-  // Query untuk mencari data customer berdasarkan username
   db.query("SELECT * FROM customer WHERE username = ?", [username], (err, customer) => {
     if (err) {
       console.error("Error fetching dataCustomer data:", err); // Tampilkan error jika query gagal
       return res.status(500).send("Internal Server Error");
     }
-    // Cek apakah ada data customer yang ditemukan
     if (customer.length === 0) {
       return res.render("dataCustomer", {
-        layout: "layout/main-layout.ejs", // Gunakan layout utama
-        customer: [], // Kirimkan array kosong jika tidak ada data yang cocok
-        message: "Data tidak ditemukan untuk username yang digunakan", // Pesan tambahan jika tidak ada data
+        layout: "layout/main-layout.ejs",
+        customer: [],
+        message: "Data tidak ditemukan untuk username yang digunakan",
       });
     }
-    // Kirimkan data customer yang ditemukan ke template
     res.render("dataCustomer", {
-      layout: "layout/main-layout.ejs", // Gunakan layout utama
-      customer, // Kirimkan data customer ke template
+      layout: "layout/main-layout.ejs",
+      customer,
     });
   });
 });
 
+// Endpoint untuk mendapatkan data kamar
+app.get('/rooms', (req, res) => {
+  db.query('SELECT nama_kamar, harga_kamar FROM room', (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'Database query error' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.delete('/indexAdmin/:id', (req, res) => {
+  const id = req.params.id;
+  // Proses penghapusan data di database
+  db.query('DELETE FROM room WHERE id = ?', [id], (err, result) => {
+      if (err) {
+          return res.status(500).send('Kesalahan saat menghapus data.');
+      }
+      res.status(200).send('Data berhasil dihapus.');
+  });
+});
+
+
 
 // Jalankan server di port yang sudah ditentukan
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`); // Informasi server berjalan
+  console.log(`Server running at http://localhost:${port}/`);
 });

@@ -120,26 +120,40 @@ router.get("/getUser", (req, res) => {
   res.json({ username: req.session.username });
 });
 
-// Rute untuk halaman index admin
+// Rute untuk halaman index 
 router.get("/index", (req, res) => {
   // Pastikan session memiliki username
   if (!req.session || !req.session.username) {
       return res.redirect("/loginAdmin?error=true&message=Please%20login%20first");
   }
+  
   // Query untuk mendapatkan data customer
-  const query = "SELECT * FROM customer";
-  db.query(query, (err, result) => {
-      if (err) {
-          console.error("Error fetching customer data:", err);
+  const customerQuery = "SELECT * FROM customer";
+  const roomQuery = "SELECT * FROM room";  // Query untuk mendapatkan data kamar
+  
+  // Ambil data customer dan kamar secara bersamaan
+  db.query(customerQuery, (errCustomer, resultCustomer) => {
+    if (errCustomer) {
+        console.error("Error fetching customer data:", errCustomer);
+        return res.status(500).send("Internal Server Error");
+    }
+    
+    db.query(roomQuery, (errRoom, resultRoom) => {
+      if (errRoom) {
+          console.error("Error fetching room data:", errRoom);
           return res.status(500).send("Internal Server Error");
       }
-      // Render halaman index admin dengan data customer
+      
+      // Render halaman index admin dengan data customer dan room
       res.render("index", {
           layout: "layout/main-layout", // Gunakan layout utama
           username: req.session.username, // Kirim username ke template
-          customer: result, // Kirim data customer ke template
+          customer: resultCustomer, // Kirim data customer ke template
+          rooms: resultRoom, // Kirim data kamar ke template
       });
+    });
   });
 });
+
 
 module.exports = router;

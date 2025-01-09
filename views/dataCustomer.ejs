@@ -113,8 +113,7 @@
         </div>
         <div class="ticket-footer d-flex justify-content-center">
           <button class="btn btn-primary btn-block downloadPdfBtn" data-id="<%= dataCustomer.id %>"><i class="bi bi-file-earmark-pdf"></i> Download PDF </button>
-          <button class="btn btn-sm btn-success btn-block ml-2 mr-2 editBtn" data-id="<%= dataCustomer.id %>"><i class="bi bi-pencil"></i> Edit</button>
-          <button class="btn btn-sm btn-danger btn-block ml-2 mr-2 deleteBtn" data-id="<%= dataCustomer.id %>"><i class="bi bi-trash"></i> Cencel</button>
+          <button class="btn btn-sm btn-danger btn-block ml-2 mr-2 deleteBtn" data-id="<%= dataCustomer.id %>"><i class="bi bi-trash"></i> Cancel</button>
         </div>
       </div>
       <% }); %>
@@ -152,6 +151,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
       // Function untuk format tanggal dan harga //

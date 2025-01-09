@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Kamar</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <nav>
@@ -47,7 +48,7 @@
                         <td class="text-center">
                             <div class="d-flex gap-2">
                                 <button class="btn btn-sm btn-success w-60 editBtn" data-id="<%= dataKamar.id %>">Edit</button>
-                                <button class="btn btn-sm btn-danger w-60 deleteBtn" data-id="<%= dataKamar.id %>">Cancel</button>
+                                <button type="button" class="btn btn-danger deleteBtn" data-id="<%= dataKamar.id %>">Hapus</button>
                             </div>
                         </td>
                     </tr>
@@ -60,6 +61,65 @@
         </div>
     </div>
 
+    <!-- Modal Konfirmasi Hapus -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">Konfirmasi Hapus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin menghapus kamar ini?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus Pesanan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    let selectedKamarId = null;
+
+    document.querySelectorAll(".deleteBtn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+            selectedKamarId = this.getAttribute("data-id");
+            const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+            modal.show();
+        });
+    });
+
+    document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+        if (selectedKamarId) {
+            fetch(`/dataKamar/${selectedKamarId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById("confirmDeleteModal"));
+                        modal.hide();
+                        location.reload(); // Reload halaman setelah penghapusan
+                    } else {
+                        return response.text().then((text) => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error deleting room:", error);
+                    alert("Terjadi kesalahan saat menghapus data.");
+                });
+        }
+    });
+});
+    </script>
 </body>
 </html>

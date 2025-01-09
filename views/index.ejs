@@ -9,6 +9,23 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     />
     <style>
+      /* Ensure the page content takes at least the full height of the screen */
+      html, body {
+        height: 97%;
+        margin: 0;
+      }
+
+      /* Create a flex container to push footer to the bottom */
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+      }
+
+      .container {
+        flex: 1;
+      }
+
       #room-list .card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
@@ -20,141 +37,90 @@
     </style>
   </head>
   <body>
-    <!-- Main Content -->
-    <div class="container mt-5">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <!-- Welcome Card -->
-          <div class="card shadow-lg mb-4">
-            <div class="card-header bg-primary text-white text-center">
-              <h4>Selamat Datang Di OYO</h4>
+    <div class="content-wrapper">
+      <!-- Main Content -->
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <!-- Welcome Card -->
+            <div class="card shadow-lg mb-4">
+              <div class="card-header bg-primary text-white text-center">
+                <h4>Selamat Datang Di OYO</h4>
+              </div>
+              <div class="card-body">
+                <p class="text-center">Booking Hotel Murah, Liburan Tanpa Hambatan, OYO in aja.</p>
+                <h5 class="text-center" style="color: green;">Welcome, <%= username %>!</h5>
+                <p class="text-center" id="username-display" style="font-weight: bold; color: green"></p>
+              </div>
             </div>
-            <div class="card-body">
-              <p class="text-center">Booking Hotel Murah, Liburan Tanpa Hambatan, OYO in aja.</p>
-              <h5 class="text-center" style="color: green;">Welcome, <%= username %>!</h5>
-              <p class="text-center" id="username-display" style="font-weight: bold; color: green"></p>
-            </div>
-          </div>
-          <!-- Room Types -->
-          <div class="card shadow-lg">
-            <div class="card-header bg-info text-white text-center">
-              <h4>Detail Jenis Kamar</h4>
-            </div>
-            <div class="card-body">
-              <div class="row" id="room-list">
-                <!-- Room Type 1 -->
-                <div class="col-md-4 mb-4">
-                  <div class="card room-card" data-description="Room with a king-sized bed, free Wi-Fi, and ocean view.">
-                    <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Deluxe Room"/>
-                    <div class="card-body">
-                      <h5 class="card-title">Deluxe Room</h5>
-                      <p class="card-text">Room with a king-sized bed, free Wi-Fi, and ocean view.</p>
-                      <span class="text-success">Rp 1,500,000</span>
+            <!-- Room Types -->
+            <div class="card shadow-lg">
+              <div class="card-header bg-info text-white text-center">
+                <h4>Detail Jenis Kamar</h4>
+              </div>
+              <div class="card-body">
+                <div class="row" id="room-list">
+                  <!-- Loop through each room from the server -->
+                  <% rooms.forEach((room) => { %>
+                    <div class="col-md-4 mb-4">
+                      <div class="card room-card" data-description="<%= room.deskripsi_kamar %>">
+                        <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="<%= room.nama_kamar %>" />
+                        <div class="card-body">
+                          <h5 class="card-title"><%= room.nama_kamar %></h5>
+                          <p class="card-text">Rp <%= room.harga_kamar %></p>
+                          <span class="text-success"><%= room.deskripsi_kamar %></span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <!-- Room Type 2 -->
-                <div class="col-md-4 mb-4">
-                  <div class="card room-card" data-description="Comfortable room with a queen-sized bed and modern amenities.">
-                    <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Junior Suite"/>
-                    <div class="card-body">
-                      <h5 class="card-title">Junior Suite</h5>
-                      <p class="card-text">Comfortable room with a queen-sized bed and modern.</p>
-                      <span class="text-success">Rp 900,000</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Room Type 3 -->
-                <div class="col-md-4 mb-4">
-                  <div class="card room-card" data-description="Spacious family room with multiple beds and a cozy ambiance.">
-                    <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Family Room"/>
-                    <div class="card-body">
-                      <h5 class="card-title">Family Room</h5>
-                      <p class="card-text">Spacious family room with multiple beds and a cozy.</p>
-                      <span class="text-success">Rp 2,000,000</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Room Type 4 -->
-                <div class="col-md-4 mb-4">
-                  <div class="card room-card" data-description="Luxurious suite with a living area and premium services.">
-                    <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Presidential Suite"/>
-                    <div class="card-body">
-                      <h5 class="card-title">Presidential Suite</h5>
-                      <p class="card-text">Luxurious suite with a living area and premium services.</p>
-                      <span class="text-success">Rp 3,000,000</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Room Type 5 -->
-                <div class="col-md-4 mb-4">
-                  <div class="card room-card" data-description="Elegant executive room with a private workspace and deluxe amenities.">
-                    <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Executive Room"/>
-                    <div class="card-body">
-                      <h5 class="card-title">Executive Room</h5>
-                      <p class="card-text">Elegant executive room with a private workspace and deluxe.</p>
-                      <span class="text-success">Rp 2,500,000</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Room Type 6 -->
-                <div class="col-md-4 mb-4">
-                  <div class="card room-card" data-description="Cozy single room perfect for solo travelers.">
-                    <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Single Room"/>
-                    <div class="card-body">
-                      <h5 class="card-title">Single Room</h5>
-                      <p class="card-text">Cozy single room perfect for solo travelers.</p>
-                      <span class="text-success">Rp 500,000</span>
-                    </div>
-                  </div>
+                  <% }); %>                
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Modal -->
-    <div
-      class="modal fade"
-      id="roomModal"
-      tabindex="-1"
-      aria-labelledby="roomModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="roomModalLabel">Room Details</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body" id="roomModalBody"></div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="roomModal"
+        tabindex="-1"
+        aria-labelledby="roomModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="roomModalLabel">Room Details</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body" id="roomModalBody"></div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Footer -->
-    <footer
-      class="text-white text-center py-2 mt-5"
-      style="background-color: rgb(35, 33, 33)"
-    >
-      <p class="mb-0">&copy; 2024 Hotel Murah. All rights reserved.</p>
-    </footer>
+      <!-- Footer -->
+      <footer
+        class="text-white text-center py-2 mt-5"
+        style="background-color: rgb(35, 33, 33)"
+      >
+        <p class="mb-0">&copy; 2024 Hotel Murah. All rights reserved.</p>
+      </footer>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
