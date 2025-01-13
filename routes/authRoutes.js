@@ -39,11 +39,12 @@ router.post("/register", (req, res) => {
         console.error("Error inserting user into database:", err);
         return res.status(500).json({ error: "Failed to register user" });
       }
-      // Berhasil registrasi, redirect ke halaman login
-      res.redirect("/login");
+      // Berhasil registrasi, redirect ke halaman login dengan pesan sukses
+      res.redirect("/login?success=true&message=Registration%20successful%2C%20please%20login%20now");
     });
   });
 });
+
 
 // Halaman Login
 router.get("/login", (req, res) => {

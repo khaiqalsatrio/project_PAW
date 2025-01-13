@@ -163,7 +163,6 @@ router.delete("/:id", (req, res) => {
   if (!id || isNaN(id)) {
     return res.status(400).send("ID tidak valid");
   }
-
   // Query untuk menghapus data customer berdasarkan ID
   db.query("DELETE FROM customer WHERE id = ?", [id], (err, results) => {
     if (err) {

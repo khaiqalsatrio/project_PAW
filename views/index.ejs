@@ -2,132 +2,267 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Affordable Hotel Booking</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
     <style>
-      /* Ensure the page content takes at least the full height of the screen */
-      html, body {
-        height: 97%;
-        margin: 0;
+      /* Menambahkan box-sizing border-box untuk semua elemen */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
       }
 
-      /* Create a flex container to push footer to the bottom */
-      .content-wrapper {
+      /* Pastikan body dan html memiliki lebar 100% dan tidak ada margin atau padding yang menyebabkan overflow */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
         display: flex;
-        flex-direction: column;
-        min-height: 100%;
+        flex-direction: column; /* Menyusun elemen secara vertikal */
       }
 
       .container {
-        flex: 1;
+        flex-grow: 1; /* Membuat konten mengisi ruang yang tersedia */
       }
 
+      /* Header styles */
+      .card-header {
+        background: linear-gradient(90deg, rgba(72, 168, 252, 1) 0%, rgba(0, 204, 255, 1) 100%);
+        color: white;
+      }
+
+      .card-header h4 {
+        font-weight: bold;
+        font-family: 'Arial', sans-serif;
+      }
+
+      .card-body p {
+        font-size: 1rem;
+        font-family: 'Arial', sans-serif;
+      }
+
+      /* Room Cards */
       #room-list .card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 100%; /* Set a max width for the cards */
+        height: 300px; /* Menentukan tinggi tetap untuk card */
       }
 
       #room-list .card:hover {
-        transform: translateY(-10px) rotate(2deg);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
       }
+
+      #room-list .card-body {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+
+      #room-list .card-body h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 10px; /* Mengurangi jarak antar elemen */
+      }
+
+      #room-list .card-body .card-text {
+        font-size: 0.9rem;
+        color: #2a9d8f;
+        margin-bottom: 5px; /* Mengurangi jarak antara teks */
+      }
+
+      /* Gambar */
+      .card img {
+        object-fit: cover; /* Memastikan gambar menutupi seluruh area tanpa distorsi */
+        width: 100%; /* Membuat gambar responsif mengikuti lebar kontainer */
+        height: 200px; /* Menjaga ukuran tetap pada gambar */
+      }
+
+      /* Fasilitas Section */
+      .icon-large {
+        font-size: 3.5rem; /* Memperbesar ukuran ikon */
+        margin-bottom: 10px;
+      }
+
+      /* Footer Styling */
+      footer {
+        background-color: #333;
+        color: white;
+        padding: 8px;
+        width: 100%;
+        text-align: center;
+      }
+
+      footer p {
+        margin-bottom: 0;
+      }
+
+      /* Modal Styling */
+      .modal-body {
+        font-size: 1rem;
+        padding: 20px;
+      }
+
+      .modal-header {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .carousel-indicators button {
+        background-color: #007bff;
+      }
+
+      /* Typography and Background Adjustments */
+      body {
+        font-family: 'Roboto', sans-serif;
+      }
+
+      .card-header, footer {
+        background-color: #333;
+      }
+
+      .card-body p, .modal-body {
+        font-size: 1rem;
+      }
+
     </style>
   </head>
   <body>
-    <div class="content-wrapper">
-      <!-- Main Content -->
-      <div class="container mt-5">
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <!-- Welcome Card -->
-            <div class="card shadow-lg mb-4">
-              <div class="card-header bg-primary text-white text-center">
-                <h4>Selamat Datang Di OYO</h4>
-              </div>
-              <div class="card-body">
-                <p class="text-center">Booking Hotel Murah, Liburan Tanpa Hambatan, OYO in aja.</p>
-                <h5 class="text-center" style="color: green;">Welcome, <%= username %>!</h5>
-                <p class="text-center" id="username-display" style="font-weight: bold; color: green"></p>
-              </div>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-12">
+          <div class="card shadow-lg mb-4 mt-4">
+            <div class="card-header text-center">
+              <h4>Selamat Datang Di Abdur Hotels</h4>
             </div>
-            <!-- Room Types -->
-            <div class="card shadow-lg">
-              <div class="card-header bg-info text-white text-center">
-                <h4>Detail Jenis Kamar</h4>
-              </div>
-              <div class="card-body">
-                <div class="row" id="room-list">
-                  <!-- Loop through each room from the server -->
-                  <% rooms.forEach((room) => { %>
-                    <div class="col-md-4 mb-4">
-                      <div class="card room-card" data-description="<%= room.deskripsi_kamar %>">
-                        <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="<%= room.nama_kamar %>" />
-                        <div class="card-body">
-                          <h5 class="card-title"><%= room.nama_kamar %></h5>
-                          <p class="card-text">Rp <%= room.harga_kamar %></p>
-                          <span class="text-success"><%= room.deskripsi_kamar %></span>
+            <div class="card-body">
+              <p class="text-center">Booking Hotel Murah, Liburan Tanpa Hambatan, Abdur Hotels aja.</p>
+              <h5 class="text-center" style="color: rgb(2, 134, 97);">
+                <i class="bi bi-person-circle"></i> Welcome, <%= username %>!
+              </h5>
+            </div>
+          </div>        
+        
+          <!-- Room Types -->
+          <div class="card shadow-lg mt-4">
+            <div class="card-header bg-info text-white text-center">
+              <h4>Jenis & Detail Kamar</h4>
+            </div>
+            <div class="card-body">
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="room-list">
+                <% rooms.forEach((room) => { %>
+                  <div class="col mb-4">
+                    <div class="card room-card shadow-sm h-100" data-description="<%= room.deskripsi_kamar %>">
+                      <div class="row g-0">
+                        <div class="col-md-5">
+                          <img src="./gambar/gambar_hotel2 .webp" class="img-fluid rounded-start" alt="<%= room.nama_kamar %>" />
+                        </div>
+                        <div class="col-md-7">
+                          <div class="card-body d-flex flex-column" style="background-color: whitesmoke;">
+                            <h6 class="card-title"><%= room.nama_kamar %></h6>
+                            <p>Klik Sekarang Lihat Detail Kamar</p>
+                            <div class="d-flex align-items-center">
+                              <!-- Ikon Wi-Fi -->
+                              <i class="fas fa-wifi me-2"></i> 
+                              <span>Free Wi-Fi</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                              <!-- Ikon Water Heater -->
+                              <i class="fas fa-shower me-2"></i>
+                              <span>Water Heater</span>
+                            </div>
+                            <h5 class="card-text">Harga : Rp <%= room.harga_kamar %> / malam</h5>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  <% }); %>                
-                </div>
+                  </div>
+                <% }); %>
               </div>
             </div>
-          </div>
+          </div>                   
         </div>
       </div>
-
-      <!-- Modal -->
-      <div
-        class="modal fade"
-        id="roomModal"
-        tabindex="-1"
-        aria-labelledby="roomModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="roomModalLabel">Room Details</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body" id="roomModalBody"></div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <footer
-        class="text-white text-center py-2 mt-5"
-        style="background-color: rgb(35, 33, 33)"
-      >
-        <p class="mb-0">&copy; 2024 Hotel Murah. All rights reserved.</p>
-      </footer>
     </div>
 
-    <!-- Scripts -->
+    <!-- Modal -->
+    <div class="modal fade" id="roomModal" tabindex="-1" aria-labelledby="roomModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="roomModalLabel">Detail Kamar</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="roomModalBody"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fasilitas Section -->
+    <div class="container mt-4 mb-5">
+      <div style="border: 2px solid whitesmoke; margin-bottom: 10px; border-radius: 10px; background-color: #333;">
+        <h4 class="text-center" style="font-style: italic; color: white;">Fasilitas</h4>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+        <!-- Card 1 -->
+        <div class="col">
+          <div class="card shadow-sm text-center p-4" style="border-radius: 15px; background-color: #f8f9fa;">
+            <div class="card-body">
+              <i class="bi bi-wifi icon-large text-primary"></i>
+              <h5 class="card-title mt-3" style="font-weight: bold;">Free WiFi</h5>
+              <p class="card-text">Nikmati akses Wi-Fi cepat dan di seluruh area.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col">
+          <div class="card shadow-sm text-center p-4" style="border-radius: 15px; background-color: #f8f9fa;">
+            <div class="card-body">
+              <i class="bi bi-car-front icon-large text-secondary"></i>
+              <h5 class="card-title mt-3" style="font-weight: bold;">Parking Area</h5>
+              <p class="card-text">Area parkir luas dan aman untuk kendaraan.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="col">
+          <div class="card shadow-sm text-center p-4" style="border-radius: 15px; background-color: #f8f9fa;">
+            <div class="card-body">
+              <i class="bi bi-cup-hot icon-large text-warning"></i>
+              <h5 class="card-title mt-3" style="font-weight: bold;">Breakfast</h5>
+              <p class="card-text">Nikmati sarapan pagi yang lezat setiap hari.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-4">
+      <p>&copy; 2025 Abdur Hotels. All rights reserved.</p>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       document.querySelectorAll('.room-card').forEach((card) => {
         card.addEventListener('click', function () {
-          const description = this.getAttribute('data-description');
+          const description = this.getAttribute('data-description') || "Deskripsi tidak tersedia.";
           document.getElementById('roomModalBody').textContent = description;
           const roomModal = new bootstrap.Modal(document.getElementById('roomModal'));
           roomModal.show();

@@ -13,6 +13,9 @@ const app = express();
 
 const port = process.env.PORT || 3000; // Default ke port 3000 jika tidak ada di .env
 
+// Set folder 'views/gambar' sebagai folder statis
+app.use('/gambar', express.static(__dirname + '/views/gambar'));
+
 // Middleware untuk parsing JSON dan form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -175,7 +178,37 @@ app.delete('/indexAdmin/:id', (req, res) => {
   });
 });
 
+// confirmasi booking
+app.post('/confirmBooking/:id', (req, res) => {
+  const customerId = req.params.id;
+  const { status } = req.body;
+  // Cek apakah status valid
+  if (status !== "Confirmed") {
+      return res.status(400).send("Status tidak valid");
+  }
+  // Update status booking di database
+  const query = "UPDATE customer SET status = ? WHERE id = ?";
+  db.query(query, [status, customerId], (err, result) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).send("Terjadi kesalahan saat mengupdate data.");
+      }
+      // Kirimkan respons sukses dengan status terbaru
+      res.status(200).send({ status: 'Confirmed' }); // Kirimkan status baru
+  });
+});
 
+// Mengirim status terbaru ke template
+app.get('/dataCustomer', (req, res) => {
+  const query = "SELECT * FROM customer";
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send("Terjadi kesalahan saat mengambil data.");
+    }
+    res.render('dataCustomer', { customer: result });
+  });
+});
 
 // Jalankan server di port yang sudah ditentukan
 app.listen(port, () => {

@@ -5,53 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Data Kamar</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
 </head>
+
+<style>
+        body {
+        display: flex;
+        flex-direction: column; /* Mengatur elemen dalam kolom vertikal */
+        min-height: 100vh; /* Tinggi minimum halaman adalah 100% viewport */
+        margin: 0;
+    }
+
+    main {
+        flex: 1; /* Elemen utama mengambil sisa ruang antara navbar dan footer */
+    }
+
+    footer {
+        background-color: #333; /* Warna latar footer */
+        padding: 5px; /* Padding atas dan bawah */
+        color: whitesmoke; /* Warna teks footer */
+        margin-top: auto; /* Memastikan footer berada di bawah */
+    }
+
+    
+</style>
+
 <body>
-    <nav>
-        <ul class="nav nav-tabs" style="background-color: rgb(36, 36, 200);">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-primary navbar-light">
+        <ul class="nav nav-pills">
             <li class="nav-item">
-                <a class="nav-link" href="/indexAdmin" style="color: white;">Data Customer</a>
+                <a class="nav-link" href="/indexAdmin" style="color: white;">
+                    <i class="fas fa-users"></i> Data Customer
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/jenisKamar" style="color: white;">Tambah Jenis Kamar</a>
+                <a class="nav-link" href="/jenisKamar" style="color: white;">
+                    <i class="fas fa-bed"></i> Tambah Jenis Kamar
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/dataKamar" style="color: white;">Daftar Kamar</a>
+                <a class="nav-link" href="/dataKamar" style="color: white;">
+                    <i class="fas fa-list-alt"></i> Daftar Kamar
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/logoutAdmin" style="color: white;">Logout</a>
+                <a class="nav-link" href="/logoutAdmin" style="color: white;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </li>
         </ul>
     </nav>
-    <div class="container mt-5">
-        <div class="card" style="background-color: whitesmoke;">
-            <div class="card-header text-center" style="background-color: rgb(73, 194, 208); color: whitesmoke;">
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card" style="width: 100%; max-width: 600px;">
+            <div class="card-header text-center bg-primary text-white">
                 <h3>Tambah Data Kamar</h3>
             </div>
-            <div class="card-body">
+            <div class="card-body text-dark" style="background-color: whitesmoke;">
                 <form action="/submitKamar" method="POST">
                     <div class="form-group">
                         <label for="namaKamar">Nama Kamar</label>
-                        <input type="text" class="form-control" id="namaKamar" name="nama_kamar" required>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-sign"></i></span>
+                            </div>
+                            <input type="text" class="form-control" id="namaKamar" name="nama_kamar" required>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="hargaKamar">Harga Kamar</label>
-                        <input type="number" class="form-control" id="hargaKamar" name="harga_kamar" required>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                            </div>
+                            <input type="number" class="form-control" id="hargaKamar" name="harga_kamar" required>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="deskripsiKamar">Deskripsi Kamar</label>
-                        <textarea class="form-control" id="deskripsiKamar" name="deskripsi_kamar" rows="3" required></textarea>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-pencil-alt"></i></span>
+                            </div>
+                            <textarea class="form-control" id="deskripsiKamar" name="deskripsi_kamar" rows="3" required></textarea>
+                        </div>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                        <a href="/submitKamar" class="btn btn-danger">Batal</a>
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                        <button type="button" class="btn btn-danger" id="btnCancel">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+        <!-- Footer -->
+        <footer class="text-center">
+            <p>&copy; 2025 Abdur Hotels. All rights reserved.</p>
+        </footer>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById("btnCancel").addEventListener("click", function() {
+        // Kosongkan semua input pada form
+        document.querySelector("form").reset();
+        
+        // Alihkan ke halaman /indexAdmin
+        window.location.href = "/indexAdmin";
+    });
+    </script>
 </body>
 </html>

@@ -11,89 +11,58 @@
     crossorigin="anonymous"
     />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-      rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    rel="stylesheet"
     />
-    <style>
-    body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        background-color: #f8f9fa;
-        margin: 0;
-    }
-    main {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-    .registerAdmin-card {
-        width: 100%;
-        max-width: 400px;
-        padding: 20px;
-        background-color: silver;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .registerAdmin-card img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-    }
-    .registerAdmin-card .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-    .registerAdmin-card .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #004085;
-    }
-    .registerAdmin-card .form-control {
-        margin-bottom: 10px;
-    }
-    .registerAdmin-card p {
-        font-size: 14px;
-    }
-    footer {
-        background-color: rgb(35, 33, 33);
-        color: white;
-        text-align: center;
-        padding: 10px 0;
-    }
-    .input-group-text {
-        background-color: #fff;
-    }
-    </style>
 </head>
 
-<body>
-    <main>
-    <div class="registerAdmin-card">
-        <h3 class="text-center mb-4">Register Admin</h3>
-        <form action="/registerAdmin" method="POST">
-        <div class="mb-3">
-            <label for="username" class="form-label">
-              <i class="bi bi-person-fill"></i> New Admin User
-            </label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan Username" required />
+<body class="d-flex flex-column min-vh-100 bg-light">
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center">
+        <div class="card shadow-sm p-4" style="max-width: 400px; width: 100%;">
+            <!-- Hotel logo using icon -->
+            <div class="text-center mb-4">
+                <i class="bi bi-house-door-fill text-primary" style="font-size: 50px;"></i>
+            </div>
+            <h3 class="text-center mb-4">Register Admin</h3>
+            <form action="/registerAdmin" method="POST">
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Masukkan Username" 
+                            required 
+                        />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Masukkan Password" 
+                            required 
+                        />
+                    </div>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Daftar Sekarang</button>
+                </div>
+            </form>
+            <p class="text-center mt-3">
+                Sudah punya akun?
+                <a href="/loginAdmin" class="text-primary">Login di sini</a>.
+            </p>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">
-              <i class="bi bi-lock-fill"></i> New Admin Password
-            </label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password" required />
-        </div>
-        <div class="d-flex justify-content-center">
-            <button type="submit" class="btn btn-primary btn-block w-50">Daftar Sekarang</button>
-        </div>
-        </form>
-        <p class="text-center mt-3">Sudah punya akun?<a href="/loginAdmin" class="text-primary">Login di sini</a>.</p>
-    </div>
     </main>
-    <footer>
-    <p class="mb-0">&copy; 2024 Hotel murah. All rights reserved.</p>
+    <footer class="bg-dark text-white text-center py-2">
+        <p class="mb-0">&copy; 2024 Abdur Hotel's. All rights reserved.</p>
     </footer>
     <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -103,12 +72,12 @@
 
     <script>
         document.getElementById('registerAdminForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Mencegah pengiriman form secara default
-        // Lakukan aksi submit form ke server Anda (misalnya, menggunakan AJAX)
-        // Jika berhasil, kosongkan form
-        this.reset();
-        alert('Registrasi berhasil!'); // Menampilkan notifikasi
-    });
+            event.preventDefault(); // Mencegah pengiriman form secara default
+            // Lakukan aksi submit form ke server Anda (misalnya, menggunakan AJAX)
+            // Jika berhasil, kosongkan form
+            this.reset();
+            alert('Registrasi berhasil!'); // Menampilkan notifikasi
+        });
     </script>
 </body>
 </html>

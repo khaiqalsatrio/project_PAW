@@ -186,6 +186,51 @@ router.post("/submitKamar", (req, res) => {
     });
 });
 
+// Mengupdate data kamar
+router.put("/editKamar/:id", (req, res) => {
+    const id = req.params.id; // Ambil ID dari parameter URL
+    const { nama_kamar, harga_kamar, deskripsi_kamar } = req.body;
+    // Validasi input
+    if (!id || !nama_kamar || !harga_kamar || !deskripsi_kamar) {
+        return res.status(400).json({ error: "Semua field harus diisi" });
+    }
+    if (typeof nama_kamar !== "string" || typeof deskripsi_kamar !== "string" || isNaN(harga_kamar)) {
+        return res.status(400).json({ error: "Input tidak valid" });
+    }
+    if (!Number.isFinite(Number(harga_kamar)) || Number(harga_kamar) <= 0) {
+        return res.status(400).json({ error: "Harga kamar harus berupa angka positif" });
+    }
+    const query = "UPDATE room SET nama_kamar = ?, harga_kamar = ?, deskripsi_kamar = ? WHERE id = ?";
+    const values = [nama_kamar, harga_kamar, deskripsi_kamar, id];
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error("Error updating data in database:", err);
+            return res.status(500).json({ error: "Gagal mengupdate data kamar" });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Data kamar tidak ditemukan" });
+        }
+        res.status(200).json({ message: "Data kamar berhasil diupdate", id });
+    });
+});
+
+// Mendapatkan data kamar
+router.get("/editKamar/:id", (req, res) => {
+    const id = req.params.id;
+    console.log("Request masuk untuk ID kamar:", id);
+    const query = "SELECT * FROM room WHERE id = ?";
+    db.query(query, [id], (err, result) => {
+        if (err) {
+            console.error("Error fetching room data:", err);
+            return res.status(500).json({ error: "Gagal mengambil data kamar" });
+        }
+        if (result.length === 0) {
+            console.log("Kamar tidak ditemukan untuk ID:", id);
+            return res.status(404).json({ error: "Data kamar tidak ditemukan" });
+        }
+        res.status(200).json(result[0]);
+    });
+});
 
 
 module.exports = router;

@@ -10,129 +10,133 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
         crossorigin="anonymous"
     />
-    <style>
-    /* Custom CSS untuk memperbaiki tampilan tabel */
-    .table th, .table td {
-        vertical-align: middle;
-        text-align: center;
-        padding: 8px; /* Kurangi padding agar tidak terlalu besar */
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column; /* Mengatur elemen dalam kolom vertikal */
+        min-height: 100vh; /* Tinggi minimum halaman adalah 100% viewport */
+        margin: 0;
     }
-    
-    .table th {
-        background-color: #007bff;
-        color: white;
-        padding: 10px; /* Menambahkan sedikit padding untuk header agar lebih proporsional */
+
+    main {
+        flex: 1; /* Elemen utama mengambil sisa ruang antara navbar dan footer */
     }
-    
-    .table-striped tbody tr:nth-child(odd) {
-        background-color: #f2f2f2;
+
+    footer {
+        background-color: #333; /* Warna latar footer */
+        padding: 5px; /* Padding atas dan bawah */
+        color: whitesmoke; /* Warna teks footer */
+        margin-top: auto; /* Memastikan footer berada di bawah */
     }
-    
-    .table-hover tbody tr:hover {
-        background-color: #e6f7ff;
-    }
-    
-    .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    .card-header {
-        border-radius: 12px 12px 0 0;
-    }
-    
-    .alert-warning {
-        background-color: #fff3cd;
-        border-color: #ffeeba;
-        color: #856404;
-    }
-    
-    .btn-group .btn {
-        width: 45%;
-    }
-    
-    /* Menambah jarak antara tabel dan elemen lain */
-    .table-responsive {
-        margin-top: 20px;  /* Menambahkan margin atas */
-        margin-bottom: 20px; /* Menambahkan margin bawah */
-    }
-    /* Mengatur ukuran dan jarak tabel lebih proporsional */
-    table {
-        margin: 0 auto; /* Menjaga tabel tetap terpusat */
-        width: 100%; /* Tabel memenuhi lebar container */
-    }
-    </style>
+</style>
+
 </head>
 <body>
-    <ul class="nav nav-tabs" style="background-color: rgb(36, 36, 200);">
-        <li class="nav-item">
-            <a class="nav-link" href="/indexAdmin" style="color: white;">Data Customer</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/jenisKamar" style="color: white;">Tambah Jenis Kamar</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/dataKamar" style="color: white;">Daftar Kamar</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/logoutAdmin" style="color: white;">Logout</a>
-        </li>
-    </ul>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-primary navbar-light">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link" href="/indexAdmin" style="color: white;">
+                    <i class="fas fa-users"></i> Data Customer
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/jenisKamar" style="color: white;">
+                    <i class="fas fa-bed"></i> Tambah Jenis Kamar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/dataKamar" style="color: white;">
+                    <i class="fas fa-list-alt"></i> Daftar Kamar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logoutAdmin" style="color: white;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
 
-    <div class="card shadow-lg mb-4 mt-5 mx-auto" style="max-width: 76%;">
+    <!-- Welcome Section -->
+    <div class="card shadow-lg mb-4 mt-5 mx-auto" style="width: 1300px;">
         <div class="card-header bg-primary text-white text-center">
             <h4>Selamat Datang Di Admin Page</h4>
         </div>
-        <div class="card-body">
-            <p class="text-center" id="username-display" style="font-weight: bold; color: green"></p>
-            <h4 class="text-center" style="color: green;">Welcome, <%= username %>!</h4>
+        <div class="card-body text-center">
+            <p id="username-display" class="fw-bold"></p>
+            <h4 style="color: green;">Welcome, <%= username %>!</h4>
         </div>
     </div>
 
+    <!-- Data Cards Section -->
     <div class="container mt-4">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped align-middle w-100">
-                <thead class="table-primary text-center">
-                    <tr>
-                        <th style="width: 10%;">ID Booking</th>
-                        <th style="width: 20%;">Nama Customer</th>
-                        <th style="width: 10%;">Email</th>
-                        <th style="width: 10%;">No. Telepon</th>
-                        <th style="width: 10%;">Kamar</th>
-                        <th style="width: 10%;">Check-in</th>
-                        <th style="width: 10%;">Check-out</th>
-                        <th style="width: 10%;">Harga</th>
-                        <th style="width: 10%;">Username</th>
-                        <th style="width: 10%;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="customerList">
-                    <% customer.forEach((indexAdmin, i) => { %>
-                    <tr>
-                        <td class="text-center"><%= indexAdmin.id %></td>
-                        <td class="text-center"><%= indexAdmin.nama %></td>
-                        <td class="text-center"><%= indexAdmin.email %></td>
-                        <td class="text-center"><%= indexAdmin.phone_number %></td>
-                        <td class="text-center"><%= indexAdmin.jenis_room %></td>
-                        <td class="text-center date-cell"><%= indexAdmin.check_in_date %></td>
-                        <td class="text-center date-cell"><%= indexAdmin.check_out_date %></td>
-                        <td class="text-center"><%= indexAdmin.harga %></td>
-                        <td class="text-center"><%= indexAdmin.username %></td>
-                        <td class="text-center">
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-success w-60 editBtn" data-id="<%= indexAdmin.id %>">Accept</button>
-                                <button class="btn btn-sm btn-danger w-60 deleteBtn" data-id="<%= indexAdmin.id %>">Cancel</button>
+        <div class="row g-4">
+            <% customer.forEach((indexAdmin) => { %>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5>ID Booking: <%= indexAdmin.id %></h5>
+                    </div>                    
+                    <div class="card-body d-flex flex-column" style="background-color: whitesmoke;">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-user"></i> Nama Customer</strong>
+                                <p><%= indexAdmin.nama %></p>
                             </div>
-                        </td>
-                    </tr>
-                    <% }); %>
-                </tbody>                
-            </table>
-            <% if (customer.length === 0) { %>
-            <div class="alert alert-warning text-center" role="alert">Belum ada Data Pesanan</div>
-            <% } %>
+                            <div class="col-6">
+                                <strong><i class="fas fa-envelope"></i> Email</strong>
+                                <p><%= indexAdmin.email %></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-phone"></i> No. Telepon</strong>
+                                <p><%= indexAdmin.phone_number %></p>
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-bed"></i> Kamar</strong>
+                                <p><%= indexAdmin.jenis_room %></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-calendar-alt"></i> Check-in</strong>
+                                <p class="date-cell"><%= indexAdmin.check_in_date %></p>
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-calendar-check"></i> Check-out</strong>
+                                <p class="date-cell"><%= indexAdmin.check_out_date %></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-dollar-sign"></i> Harga</strong>
+                                <p><%= indexAdmin.harga %></p>
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-user-tag"></i> Username</strong>
+                                <p><%= indexAdmin.username %></p>
+                            </div>
+                        </div>
+                        <div class="mt-auto d-flex justify-content-between">
+                            <button class="btn btn-sm btn-success confirmBtn" data-id="<%= indexAdmin.id %>">
+                                <i class="fas fa-check-circle"></i> Confirm
+                            </button>
+                            <button class="btn btn-sm btn-danger deleteBtn" data-id="<%= indexAdmin.id %>">
+                                <i class="fas fa-times-circle"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
         </div>
+        <% if (customer.length === 0) { %>
+        <div class="alert alert-warning text-center mt-4" role="alert">Belum ada Data Pesanan</div>
+        <% } %>
     </div>
 
     <!-- Modal Konfirmasi Hapus -->
@@ -153,6 +157,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <p>&copy; 2025 Abdur Hotels. All rights reserved.</p>
+    </footer>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -200,20 +209,11 @@
                 }
             });
         });
+
         function formatDate(date) {
             const months = [
-                "Januari",
-                "Februari",
-                "Maret",
-                "April",
-                "Mei",
-                "Juni",
-                "Juli",
-                "Agustus",
-                "September",
-                "Oktober",
-                "November",
-                "Desember",
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
             ];
             const d = new Date(date);
             const day = d.getDate().toString().padStart(2, "0");
@@ -222,6 +222,7 @@
             return `${day} ${month} ${year}`;
         }
     </script>
+
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
