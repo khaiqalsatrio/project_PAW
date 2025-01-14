@@ -83,7 +83,7 @@
                     <div class="card-body d-flex flex-column" style="background-color: whitesmoke;">
                         <div class="row">
                             <div class="col-6">
-                                <strong><i class="fas fa-user"></i> Nama Customer</strong>
+                                <strong><i class="fas fa-user"></i> Nama Tamu</strong>
                                 <p><%= indexAdmin.nama %></p>
                             </div>
                             <div class="col-6">
@@ -120,10 +120,22 @@
                                 <strong><i class="fas fa-user-tag"></i> Username</strong>
                                 <p><%= indexAdmin.username %></p>
                             </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Status </strong>
+                                    <p style="color: green;" class="status-cell">
+                                        <% if (indexAdmin.status === 'Confirmed') { %>
+                                            <i class="fas fa-check-circle" style="color: green;"></i> <%= indexAdmin.status %>
+                                        <% } else { %>
+                                            <i class="fas fa-clock" style="color: orange;"></i> <%= indexAdmin.status || 'Pending' %>
+                                        <% } %>
+                                    </p>
+                                </div>                            
+                            </div>                                                       
                         </div>
                         <div class="mt-auto d-flex justify-content-between">
                             <button class="btn btn-sm btn-success confirmBtn" data-id="<%= indexAdmin.id %>">
-                                <i class="fas fa-check-circle"></i> Confirm
+                                <i class="fas fa-check-circle"></i> Proses
                             </button>
                             <button class="btn btn-sm btn-danger deleteBtn" data-id="<%= indexAdmin.id %>">
                                 <i class="fas fa-times-circle"></i> Cancel
@@ -158,12 +170,64 @@
         </div>
     </div>
 
+    <!-- Modal Notifikasi Konfirmasi Berhasil -->
+    <div id="confirmSuccessModal" class="modal fade" tabindex="-1" aria-labelledby="confirmSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmSuccessModalLabel">Konfirmasi Berhasil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Pesanan telah berhasil dikonfirmasi!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="text-center">
         <p>&copy; 2025 Abdur Hotels. All rights reserved.</p>
     </footer>
 
     <script>
+        document.querySelectorAll(".confirmBtn").forEach((btn) => {
+            btn.addEventListener("click", function () {
+                const customerId = this.getAttribute("data-id");
+
+                fetch(`/indexAdmin/${customerId}/confirm`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then((response) => {
+                    if (response.ok) {
+                        // Ubah status di UI menjadi Confirmed langsung setelah berhasil
+                        const statusCell = this.closest(".card").querySelector(".status-cell");
+                        if (statusCell) {
+                            statusCell.textContent = "Confirmed";  // Menampilkan "Confirmed" di UI
+                        }
+                    
+                        // Tampilkan modal konfirmasi berhasil
+                        const successModal = new bootstrap.Modal(document.getElementById('confirmSuccessModal'));
+                        successModal.show();
+                    } else {
+                        return response.text().then((text) => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error confirming customer:", error);
+                    alert("Terjadi kesalahan saat mengonfirmasi pesanan.");
+                });
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             // Format tanggal di dalam tabel
             document.querySelectorAll(".date-cell").forEach((cell) => {

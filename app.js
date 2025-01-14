@@ -96,14 +96,14 @@ app.use("/dataCustomer", customerRoutes);
 // Rute untuk login/logout
 app.use("/", authRoutes);
 
-// Rute untuk halaman utama (akses hanya jika user login)
+//halaman utama (akses hanya jika user login)
 app.get("/", isAuthenticated, (req, res) => {
   res.render("index", {
     layout: "layout/main-layout.ejs", // Gunakan layout utama
   });
 });
 
-// Rute untuk halaman booking (akses hanya jika user login)
+//halaman booking (akses hanya jika user login)
 app.get("/booking", isAuthenticated, (req, res) => {
   db.query('SELECT nama_kamar, harga_kamar FROM room', (err, results) => {
     if (err) {
@@ -115,13 +115,13 @@ app.get("/booking", isAuthenticated, (req, res) => {
   });
 });
 
-// Rute untuk halaman tambah customer
+//halaman tambah customer
 app.get("/tambahCustomer", isAuthenticated, (req, res) => {
   const username = req.session.username; // Ambil username dari sesi
   res.render("tambahCustomer", { username }); // Kirim username ke template EJS
 });
 
-// Rute untuk logout
+//logout
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -132,7 +132,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// Rute untuk menampilkan data customer
+// menampilkan data customer
 app.get("/dataCustomer-view", isAuthenticated, (req, res) => {
   const username = req.user.username; // Sesuaikan dengan bagaimana Anda menyimpan username setelah login
   
@@ -167,6 +167,7 @@ app.get('/rooms', (req, res) => {
   });
 });
 
+// delete
 app.delete('/indexAdmin/:id', (req, res) => {
   const id = req.params.id;
   // Proses penghapusan data di database
@@ -179,34 +180,16 @@ app.delete('/indexAdmin/:id', (req, res) => {
 });
 
 // confirmasi booking
-app.post('/confirmBooking/:id', (req, res) => {
+app.post('/indexAdmin/:id/confirm', (req, res) => {
   const customerId = req.params.id;
-  const { status } = req.body;
-  // Cek apakah status valid
-  if (status !== "Confirmed") {
-      return res.status(400).send("Status tidak valid");
-  }
-  // Update status booking di database
-  const query = "UPDATE customer SET status = ? WHERE id = ?";
-  db.query(query, [status, customerId], (err, result) => {
+  // Mengupdate status pelanggan di database menjadi 'Confirmed'
+  const query = "UPDATE customer SET status = 'Confirmed' WHERE id = ?";
+  db.query(query, [customerId], (err, result) => {
       if (err) {
           console.error(err);
-          return res.status(500).send("Terjadi kesalahan saat mengupdate data.");
+          return res.status(500).send("Terjadi kesalahan saat mengupdate status");
       }
-      // Kirimkan respons sukses dengan status terbaru
-      res.status(200).send({ status: 'Confirmed' }); // Kirimkan status baru
-  });
-});
-
-// Mengirim status terbaru ke template
-app.get('/dataCustomer', (req, res) => {
-  const query = "SELECT * FROM customer";
-  db.query(query, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("Terjadi kesalahan saat mengambil data.");
-    }
-    res.render('dataCustomer', { customer: result });
+      return res.status(200).send("Status berhasil diperbarui");
   });
 });
 

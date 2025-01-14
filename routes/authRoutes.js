@@ -45,7 +45,6 @@ router.post("/register", (req, res) => {
   });
 });
 
-
 // Halaman Login
 router.get("/login", (req, res) => {
   // Render halaman login dengan layout utama
@@ -155,6 +154,5 @@ router.get("/index", (req, res) => {
     });
   });
 });
-
 
 module.exports = router;
